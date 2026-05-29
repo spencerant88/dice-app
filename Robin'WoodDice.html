@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Symbol D6 Dice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .dice {
+      width: min(70vw, 320px);
+      aspect-ratio: 1 / 1;
+      background: #1e1e1e;
+      border: 6px solid #f2f2f2;
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      position: relative;
+      transition: transform 0.15s ease;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+    }
+
+    .dice.rolling {
+      animation: shake 0.45s ease;
+    }
+
+    @keyframes shake {
+      0% { transform: rotate(0deg) scale(1); }
+      20% { transform: rotate(-8deg) scale(1.03); }
+      40% { transform: rotate(8deg) scale(0.98); }
+      60% { transform: rotate(-5deg) scale(1.02); }
+      80% { transform: rotate(5deg) scale(0.99); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    svg {
+      width: 72%;
+      height: 72%;
+    }
+
+    button {
+      border: none;
+      background: white;
+      color: black;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.1s ease, background 0.2s ease;
+    }
+
+    button:hover {
+      background: #ddd;
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .label {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: #bdbdbd;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="dice" id="diceFace"></div>
+
+    <button id="rollButton">Roll Dice</button>
+
+    <div class="label" id="resultLabel">Circle (Solid)</div>
+  </div>
+
+  <script>
+    const faces = [
+      {
+        name: 'Circle (Solid)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="32" fill="white" />
+          </svg>
+        `
+      },
+      {
+        name: 'Circle (Outline)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="32" fill="none" stroke="white" stroke-width="8" />
+          </svg>
+        `
+      },
+      {
+        name: 'Square (Solid)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <rect x="22" y="22" width="56" height="56" fill="white" rx="4" />
+          </svg>
+        `
+      },
+      {
+        name: 'Square (Outline)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <rect x="22" y="22" width="56" height="56" fill="none" stroke="white" stroke-width="8" rx="4" />
+          </svg>
+        `
+      },
+      {
+        name: 'Triangle (Solid)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <polygon points="50,18 82,78 18,78" fill="white" />
+          </svg>
+        `
+      },
+      {
+        name: 'Triangle (Outline)',
+        svg: `
+          <svg viewBox="0 0 100 100">
+            <polygon points="50,18 82,78 18,78" fill="none" stroke="white" stroke-width="8" stroke-linejoin="round" />
+          </svg>
+        `
+      }
+    ];
+
+    const diceFace = document.getElementById('diceFace');
+    const resultLabel = document.getElementById('resultLabel');
+    const rollButton = document.getElementById('rollButton');
+
+    function renderFace(index) {
+      diceFace.innerHTML = faces[index].svg;
+      resultLabel.textContent = faces[index].name;
+    }
+
+    function rollDice() {
+      diceFace.classList.add('rolling');
+
+      let shuffleCount = 0;
+      const shuffleInterval = setInterval(() => {
+        const tempIndex = Math.floor(Math.random() * faces.length);
+        renderFace(tempIndex);
+        shuffleCount++;
+
+        if (shuffleCount > 10) {
+          clearInterval(shuffleInterval);
+
+          const finalIndex = Math.floor(Math.random() * faces.length);
+          renderFace(finalIndex);
+
+          setTimeout(() => {
+            diceFace.classList.remove('rolling');
+          }, 100);
+        }
+      }, 50);
+    }
+
+    rollButton.addEventListener('click', rollDice);
+
+    renderFace(0);
+  </script>
+</body>
+</html>
